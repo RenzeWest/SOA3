@@ -1,0 +1,42 @@
+﻿namespace SOA3.Domain.BacklogPatterns
+{
+    public class BacklogItem
+    {
+        private Guid _id;
+        public string Title { get; }
+        private string _description;
+        private int _storyPoints;
+        private Person _assignedDeveloper;
+        private Sprint _sprint;
+
+        public IBacklogItemState TodoState { get; }
+        public IBacklogItemState DoingState { get; }
+        public IBacklogItemState ReadyForTestingState { get; }
+        public IBacklogItemState TestingState { get; }
+        public IBacklogItemState TestedState { get; }
+        public IBacklogItemState DoneState { get; }
+
+        private IBacklogItemState _state;
+        
+        public BacklogItem()
+        {
+            TodoState = new TodoState(this);
+            DoingState = new DoingState(this);
+            ReadyForTestingState = new ReadyForTestingState(this);
+            TestingState = new TestingState(this);
+            TestedState = new TestedState(this);
+            DoneState = new DoneState(this);
+            _state = TodoState;
+        }
+
+        public void SetState(IBacklogItemState state) => _state = state;
+        public IBacklogItemState GetState() => _state;
+        public void StartWork() => _state.StartWork();
+        public void MarkReadyForTesting() => _state.MarkReadyForTesting();
+        public void StartTesting() => _state.StartTesting();
+        public void ApproveTest() => _state.ApproveTest();
+        public void AcceptDone() => _state.AcceptDone();
+        public void RejectToDo() => _state.RejectToDo();
+        public void RejectToReadyForTesting() => _state.RejectToReadyForTesting();
+    }
+}

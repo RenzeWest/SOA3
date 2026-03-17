@@ -2,5 +2,6 @@
 {
     public interface ISlackNotifier : INotificationSubscriber
     {
+        bool ShouldSendMessage(Person person);
     }
 }

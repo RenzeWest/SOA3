@@ -2,6 +2,6 @@
 {
     public interface IEmailNotifier : INotificationSubscriber
     {
-
+        bool ShouldSendEmail(Person person);
     }
 }

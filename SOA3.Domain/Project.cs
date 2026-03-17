@@ -1,4 +1,6 @@
 ﻿using SOA3.Domain.BacklogPatterns;
+using SOA3.Domain.ForumPattern;
+using SOA3.Domain.PipelinePatterns;
 using SOA3.Domain.SCMConfigPatterns;
 
 namespace SOA3.Domain
@@ -16,5 +18,6 @@ namespace SOA3.Domain
         private Forum _forum;
         private string _definitionOfDone;
         private List<BacklogItem> _productBacklog = new List<BacklogItem>();
+        private List<DevelopmentPipeline> _developmentPipelines = new List<DevelopmentPipeline>();
     }
 }

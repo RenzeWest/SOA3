@@ -1,4 +1,7 @@
-﻿namespace SOA3.Domain.BacklogPatterns
+﻿using SOA3.Domain.ForumPattern;
+using SOA3.Domain.SprintPatterns;
+
+namespace SOA3.Domain.BacklogPatterns
 {
     public class BacklogItem
     {
@@ -8,6 +11,7 @@
         private int _storyPoints;
         private Person _assignedDeveloper;
         private Sprint _sprint;
+        private List<DiscussionThread> _discussionThreads = new List<DiscussionThread>();
 
         public IBacklogItemState TodoState { get; }
         public IBacklogItemState DoingState { get; }
@@ -29,6 +33,7 @@
             _state = TodoState;
         }
 
+        public void AddDiscussionThread(DiscussionThread thread) => _discussionThreads.Add(thread);
         public void SetState(IBacklogItemState state) => _state = state;
         public IBacklogItemState GetState() => _state;
         public void StartWork() => _state.StartWork();

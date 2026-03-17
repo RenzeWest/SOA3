@@ -7,5 +7,7 @@
         private string _email;
         private List<NotificationChannel> _notificationPreferences = new List<NotificationChannel>();
 
+        public string GetName() => _name;   
+
     }
 }

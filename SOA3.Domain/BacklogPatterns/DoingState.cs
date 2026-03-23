@@ -2,9 +2,9 @@
 {
     public class DoingState : IBacklogItemState
     {
-        private BacklogItem _backlogItem;
+        private IBacklogItem _backlogItem;
 
-        public DoingState(BacklogItem backlogItem) => _backlogItem = backlogItem;
+        public DoingState(IBacklogItem backlogItem) => _backlogItem = backlogItem;
         public void StartWork() => throw new InvalidOperationException();
         public void MarkReadyForTesting()
         {

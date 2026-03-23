@@ -2,9 +2,9 @@
 {
     public class GitSCMAdapter : ISCMService
     {
-        public void Commit(SCMConfig config, string message)
+        public void Commit(SCMConfig config, Commit commit)
         {
-            GitClient.Commit(config.RepositoryURL, config.BranchName, message);
+            GitClient.Commit(config.RepositoryURL, config.BranchName, commit.Message);
         }
     }
 }

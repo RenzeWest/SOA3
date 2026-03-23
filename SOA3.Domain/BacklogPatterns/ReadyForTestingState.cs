@@ -2,9 +2,9 @@
 {
     public class ReadyForTestingState : IBacklogItemState
     {
-        private BacklogItem _backlogItem;
+        private IBacklogItem _backlogItem;
 
-        public ReadyForTestingState(BacklogItem backlogItem) => _backlogItem = backlogItem;
+        public ReadyForTestingState(IBacklogItem backlogItem) => _backlogItem = backlogItem;
         public void StartWork() => throw new InvalidOperationException();
         public void MarkReadyForTesting() => throw new InvalidOperationException();
         public void StartTesting() 

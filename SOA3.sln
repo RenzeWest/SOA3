@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36203.30 d17.14
+VisualStudioVersion = 17.14.36203.30
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SOA3.Domain", "SOA3.Domain\SOA3.Domain.csproj", "{9FB974F7-1E52-4D9A-97C6-E433BC321A1B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SOA3.ConsoleApplication", "SOA3.ConsoleApplication\SOA3.ConsoleApplication.csproj", "{91384E54-D7F0-45D3-B506-83CEF98E4E9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SOA3.DomainServices", "SOA3.DomainServices\SOA3.DomainServices.csproj", "{C8186434-D675-4098-B411-B31BB8FAF725}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{9FB974F7-1E52-4D9A-97C6-E433BC321A1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9FB974F7-1E52-4D9A-97C6-E433BC321A1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9FB974F7-1E52-4D9A-97C6-E433BC321A1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91384E54-D7F0-45D3-B506-83CEF98E4E9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91384E54-D7F0-45D3-B506-83CEF98E4E9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91384E54-D7F0-45D3-B506-83CEF98E4E9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91384E54-D7F0-45D3-B506-83CEF98E4E9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8186434-D675-4098-B411-B31BB8FAF725}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8186434-D675-4098-B411-B31BB8FAF725}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8186434-D675-4098-B411-B31BB8FAF725}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8186434-D675-4098-B411-B31BB8FAF725}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

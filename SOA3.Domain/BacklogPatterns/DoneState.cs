@@ -2,9 +2,9 @@
 {
     public class DoneState : IBacklogItemState
     {
-        private BacklogItem _backlogItem;
+        private IBacklogItem _backlogItem;
 
-        public DoneState(BacklogItem backlogItem) => _backlogItem = backlogItem;
+        public DoneState(IBacklogItem backlogItem) => _backlogItem = backlogItem;
         public void StartWork() => throw new NotImplementedException();
         public void MarkReadyForTesting() => throw new NotImplementedException();
         public void StartTesting() => throw new NotImplementedException();

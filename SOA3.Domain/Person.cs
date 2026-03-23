@@ -5,7 +5,7 @@
         private Guid _id;
         private string _name;
         private string _email;
-        private List<NotificationChannel> _notificationPreferences = new List<NotificationChannel>();
+        //private List<NotificationChannel> _notificationPreferences = new List<NotificationChannel>();
 
         public string GetName() => _name;   
 

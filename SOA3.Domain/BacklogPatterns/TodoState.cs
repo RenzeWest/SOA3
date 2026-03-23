@@ -2,9 +2,9 @@
 {
     public class TodoState : IBacklogItemState
     {
-        private BacklogItem _backlogItem;
+        private IBacklogItem _backlogItem;
 
-        public TodoState(BacklogItem backlogItem) => _backlogItem = backlogItem;
+        public TodoState(IBacklogItem backlogItem) => _backlogItem = backlogItem;
 
         public void StartWork()
         {

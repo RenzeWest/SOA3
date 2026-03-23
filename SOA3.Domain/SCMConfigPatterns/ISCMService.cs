@@ -2,6 +2,6 @@
 {
     public interface ISCMService
     {
-        void Commit(SCMConfig config, string message);
+        void Commit(SCMConfig config, Commit commit);
     }
 }

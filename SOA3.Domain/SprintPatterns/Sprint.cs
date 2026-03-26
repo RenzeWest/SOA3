@@ -36,6 +36,12 @@ namespace SOA3.Domain.SprintPatterns
             _state = CreatedState;
         }
 
+        public string Name => _name;
+        public DateTime StartDateTime => _startDateTime;
+        public DateTime EndDateTime => _endDateTime;
+        public IReadOnlyList<BacklogItem> BacklogItems => _sprintBacklog.AsReadOnly();
+
+
         public void AddItemToBacklog(BacklogItem backlogItem) => _sprintBacklog.Add(backlogItem);
         public void setState(ISprintState state) => _state = state;
         public void StartSprint() => _state.StartSprint();

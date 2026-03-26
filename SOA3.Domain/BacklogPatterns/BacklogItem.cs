@@ -34,6 +34,12 @@ namespace SOA3.Domain.BacklogPatterns
             _state = TodoState;
         }
 
+
+        public BacklogItem(string title)
+        {
+            Title = title;
+        }
+
         public void AddDiscussionThread(DiscussionThread thread) => _discussionThreads.Add(thread);
         public void AddActivity(Activity activity) => _activities.Add(activity);
         public void SetState(IBacklogItemState state) => _state = state;

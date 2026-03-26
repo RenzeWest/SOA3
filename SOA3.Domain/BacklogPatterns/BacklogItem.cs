@@ -47,6 +47,7 @@ namespace SOA3.Domain.BacklogPatterns
             if (_activities.Any((activity) => activity.GetState().GetType() != DoneState.GetType()))
             {
                 Console.WriteLine("This backlog item was not completed. One or more of the subactivities are not done.");
+                throw new InvalidOperationException("Cannot mark BacklogItem as Done: one or more activities are not completed.");
             }
             else _state.AcceptDone();
         }

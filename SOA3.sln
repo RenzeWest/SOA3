@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SOA3.ConsoleApplication", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SOA3.DomainServices", "SOA3.DomainServices\SOA3.DomainServices.csproj", "{C8186434-D675-4098-B411-B31BB8FAF725}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SOA3.Tests", "SOA3.Tests\SOA3.Tests.csproj", "{52FA7AF5-E17F-4C44-B00E-885217909E54}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{C8186434-D675-4098-B411-B31BB8FAF725}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8186434-D675-4098-B411-B31BB8FAF725}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8186434-D675-4098-B411-B31BB8FAF725}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52FA7AF5-E17F-4C44-B00E-885217909E54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52FA7AF5-E17F-4C44-B00E-885217909E54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52FA7AF5-E17F-4C44-B00E-885217909E54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52FA7AF5-E17F-4C44-B00E-885217909E54}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

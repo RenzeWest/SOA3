@@ -38,6 +38,7 @@ namespace SOA3.Tests.BacklogPatterns
     // ----------------------------------------
     // TODO State Tests
     // ----------------------------------------
+    [Collection("Sequential")]
     public class TodoStateTests
     {
         [Fact]
@@ -64,6 +65,7 @@ namespace SOA3.Tests.BacklogPatterns
     // ----------------------------------------
     // ReadyForTesting State Tests
     // ----------------------------------------
+    [Collection("Sequential")]
     public class ReadyForTestingStateTests
     {
         [Fact]
@@ -113,6 +115,7 @@ namespace SOA3.Tests.BacklogPatterns
     // ----------------------------------------
     // Testing State Tests
     // ----------------------------------------
+    [Collection("Sequential")]
     public class TestingStateTests
     {
         [Fact]
@@ -162,6 +165,7 @@ namespace SOA3.Tests.BacklogPatterns
     // ----------------------------------------
     // Tested State Tests
     // ----------------------------------------
+    [Collection("Sequential")]
     public class TestedStateTests
     {
         [Fact]
@@ -211,6 +215,7 @@ namespace SOA3.Tests.BacklogPatterns
     // ----------------------------------------
     // Done State Tests
     // ----------------------------------------
+    [Collection("Sequential")]
     public class DoneStateTests
     {
         [Fact]

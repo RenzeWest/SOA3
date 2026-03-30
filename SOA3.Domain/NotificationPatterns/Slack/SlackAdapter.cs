@@ -2,7 +2,8 @@
 {
     public class SlackAdapter : ISlackNotifier
     {
-        private SlackClient _slackClient = new SlackClient();
+        private readonly SlackClient _slackClient;
+        public SlackAdapter(SlackClient slackClient) => _slackClient = slackClient;
         public bool ShouldSendMessage(Person person) => person.NotificationPreferences.Contains(NotificationChannel.Slack); 
         public void Update(Notification notification, List<Person> recipients)
         {

@@ -2,6 +2,6 @@
 {
     public class EmailClient
     {
-        public void SendEmail(string emailAddress, DateTime notifiedAtDateTime, string message) => Console.WriteLine($"[Send Email Notification to {emailAddress}] notified at {DateTime.UtcNow} (UTC): {message}");
+        public virtual void SendEmail(string emailAddress, DateTime notifiedAtDateTime, string message) => Console.WriteLine($"[Send Email Notification to {emailAddress}] notified at {DateTime.UtcNow} (UTC): {message}");
     }
 }

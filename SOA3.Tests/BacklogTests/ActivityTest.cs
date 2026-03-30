@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SOA3.Tests.BacklogTests
+﻿namespace SOA3.Tests.BacklogTests
 {
     using global::SOA3.Domain;
     using global::SOA3.Domain.BacklogPatterns;
-    using Moq;
-    using System;
     using Xunit;
 
     namespace SOA3.Tests.BacklogPatterns
     {
+        [Collection("Sequential")]
         public class ActivityTests
         {
             [Fact]

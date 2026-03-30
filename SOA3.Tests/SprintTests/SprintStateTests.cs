@@ -7,17 +7,25 @@ using Xunit;
 
 namespace SOA3.Tests.SprintPatterns
 {
+    [Collection("Sequential")]
     public class SprintStatePatternTests
     {
         // Helper to capture console output
         private string CaptureConsoleOutput(Action action)
         {
-            using var sw = new StringWriter();
+            var sw = new StringWriter();
             var originalOut = Console.Out;
             Console.SetOut(sw);
-            action();
-            Console.SetOut(originalOut);
-            return sw.ToString();
+            try
+            {
+                action();
+                return sw.ToString();
+            }
+            finally
+            {
+                Console.SetOut(originalOut);
+                sw.Dispose();
+            }
         }
 
         // Helper to access private _state field

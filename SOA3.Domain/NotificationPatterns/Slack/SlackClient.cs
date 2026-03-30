@@ -2,6 +2,6 @@
 {
     public class SlackClient
     {
-        public void SendSlackMessage(string username, DateTime notifiedAtDateTime, string message) => Console.WriteLine($"[Send Slack Notification to {username}] notified at {DateTime.UtcNow} (UTC): {message}");
+        public virtual void SendSlackMessage(string username, DateTime notifiedAtDateTime, string message) => Console.WriteLine($"[Send Slack Notification to {username}] notified at {DateTime.UtcNow} (UTC): {message}");
     }
 }

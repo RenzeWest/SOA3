@@ -2,7 +2,9 @@
 {
     public class EmailAdapter : IEmailNotifier
     {
-        private EmailClient _emailClient = new EmailClient();
+        private readonly EmailClient _emailClient;
+        public EmailAdapter(EmailClient emailClient) => _emailClient = emailClient;
+
         public bool ShouldSendEmail(Person person) => person.NotificationPreferences.Contains(NotificationChannel.Email);
         public void Update(Notification notification, List<Person> recipients)
         {

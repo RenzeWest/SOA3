@@ -1,11 +1,28 @@
-﻿using SOA3.Domain;
-using SOA3.Domain.NotificationPatterns.Email;
+﻿using SOA3.Domain.NotificationPatterns.Email;
 using SOA3.Domain.NotificationPatterns.Slack;
 
 namespace SOA3.Tests.NotificationTests
 {
+    [Collection("Sequential")]
     public class NotificationClientTests
     {
+        private string CaptureConsoleOutput(Action action)
+        {
+            var originalOut = Console.Out;
+            using var writer = new StringWriter();
+            Console.SetOut(writer);
+
+            try
+            {
+                action();
+                return writer.ToString();
+            }
+            finally
+            {
+                Console.SetOut(originalOut);
+            }
+        }
+
         [Fact]
         public void Email_Should_Be_Send()
         {
@@ -17,10 +34,9 @@ namespace SOA3.Tests.NotificationTests
 
             // Act
             EmailClient client = new EmailClient();
-            client.SendEmail("john@gmail.com", now, "messageSend");
+            var consoleOutput = CaptureConsoleOutput(() => client.SendEmail("john@gmail.com", now, "messageSend"));
 
             // Assert
-            var consoleOutput = stringWriter.ToString();
             Assert.Equal($"[Send Email Notification to john@gmail.com] notified at {now} (UTC): messageSend\r\n", consoleOutput);
         }
 
@@ -35,10 +51,9 @@ namespace SOA3.Tests.NotificationTests
 
             // Act
             SlackClient client = new SlackClient();
-            client.SendSlackMessage("john", now, "messageSend");
+            var consoleOutput = CaptureConsoleOutput(() => client.SendSlackMessage("john", now, "messageSend"));
 
             // Assert
-            var consoleOutput = stringWriter.ToString();
             Assert.Equal($"[Send Slack Notification to john] notified at {now} (UTC): messageSend\r\n", consoleOutput);
         }
     }

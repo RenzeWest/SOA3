@@ -7,6 +7,7 @@ using Xunit;
 
 namespace SOA3.Tests.SCMTests
 {
+    [Collection("Sequential")]
     public class SCMTests
     {
         // Helper

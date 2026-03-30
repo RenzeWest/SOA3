@@ -56,7 +56,7 @@ jobs:
             /k:"RenzeWest_SOA3" `
             /o:"renzewest" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
-            /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" `
+            /d:sonar.cs.opencover.reportsPaths="**/TestResults/coverage.opencover.xml"
             /d:sonar.cs.vstest.reportsPaths="**/*.trx"
 
           # Build project

@@ -227,5 +227,112 @@ namespace SOA3.Tests.BacklogPatterns
             Assert.Throws<NotImplementedException>(() => state.RejectToDo());
             Assert.Throws<NotImplementedException>(() => state.RejectToReadyForTesting());
         }
+
+
+        // ----------------------------------------
+        // BacklogItem State Tests
+        // ----------------------------------------
+        [Fact]
+        public void BacklogItem_ShouldInitializeWithTodoState()
+        {
+            var item = new BacklogItem();
+            Assert.Equal(item.TodoState, item.GetState());
+        }
+
+        [Fact]
+        public void StartWork_ShouldChangeStateToDoing()
+        {
+            var item = new BacklogItem();
+            item.StartWork();
+            Assert.Equal(item.DoingState, item.GetState());
+        }
+
+        [Fact]
+        public void MarkReadyForTesting_ShouldChangeStateToReadyForTesting()
+        {
+            var item = new BacklogItem();
+            item.StartWork();
+            item.MarkReadyForTesting();
+            Assert.Equal(item.ReadyForTestingState, item.GetState());
+        }
+
+        [Fact]
+        public void StartTesting_ShouldChangeStateToTesting()
+        {
+            var item = new BacklogItem();
+            item.StartWork();
+            item.MarkReadyForTesting();
+            item.StartTesting();
+            Assert.Equal(item.TestingState, item.GetState());
+        }
+
+        [Fact]
+        public void ApproveTest_ShouldChangeStateToTested()
+        {
+            var item = new BacklogItem();
+            item.StartWork();
+            item.MarkReadyForTesting();
+            item.StartTesting();
+            item.ApproveTest();
+            Assert.Equal(item.TestedState, item.GetState());
+        }
+
+        [Fact]
+        public void AcceptDone_ShouldChangeStateToDone_WhenAllActivitiesDone()
+        {
+            var item = new BacklogItem();
+            var activity = new Activity();
+            activity.SetState(activity.DoneState);
+            item.AddActivity(activity);
+
+            item.StartWork();
+            item.MarkReadyForTesting();
+            item.StartTesting();
+            item.ApproveTest();
+            item.AcceptDone();
+
+            Assert.Equal(item.DoneState, item.GetState());
+        }
+
+        [Fact]
+        public void AcceptDone_ShouldThrow_WhenAnyActivityNotDone()
+        {
+            var item = new BacklogItem();
+            var activity = new Activity();
+            activity.SetState(activity.TodoState);
+            item.AddActivity(activity);
+
+            item.StartWork();
+            item.MarkReadyForTesting();
+            item.StartTesting();
+            item.ApproveTest();
+
+            Assert.Throws<InvalidOperationException>(() => item.AcceptDone());
+        }
+
+        [Fact]
+        public void RejectToDo_ShouldReturnToTodoState()
+        {
+            var item = new BacklogItem();
+            item.StartWork();
+            item.MarkReadyForTesting();
+
+            item.RejectToDo();
+
+            Assert.Equal(item.TodoState, item.GetState());
+        }
+
+        [Fact]
+        public void RejectToReadyForTesting_ShouldReturnToReadyForTestingState()
+        {
+              var item = new BacklogItem();
+              item.StartWork();
+              item.MarkReadyForTesting();
+              item.StartTesting();
+
+              item.RejectToReadyForTesting();
+
+              Assert.Equal(item.ReadyForTestingState, item.GetState());
+        }
     }
 }

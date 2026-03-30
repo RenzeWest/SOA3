@@ -73,7 +73,6 @@ jobs:
 
           # --- Run tests WITH coverage and TRX output ---
           dotnet test SOA3.Tests/SOA3.Tests.csproj `
-            --no-build `
             --logger "trx;LogFileName=TestResults.trx" `
             /p:CollectCoverage=true `
             /p:CoverletOutputFormat=opencover `

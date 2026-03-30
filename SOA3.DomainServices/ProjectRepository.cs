@@ -5,7 +5,10 @@ namespace SOA3.DomainServices
     public class ProjectRepository
     {
 
-        public List<Project> Projects { get; } = new List<Project>();
-        public void Add(Project project) => Projects.Add(project);
+        public Project MainProject { get; private set; }
+
+        public Project? GetProject() => MainProject;
+
+        public void Create(Project project) => MainProject = project;
     }
 }

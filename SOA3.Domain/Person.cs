@@ -2,12 +2,9 @@
 {
     public class Person
     {
-        private Guid _id;
-        private string _name;
-        private string _email;
+        public Guid Id { get; } = Guid.NewGuid();
+        public required string Name { get; init; }
+        public required string Email { get; init; }
         //private List<NotificationChannel> _notificationPreferences = new List<NotificationChannel>();
-
-        public string GetName() => _name;   
-
     }
 }

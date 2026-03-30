@@ -20,7 +20,7 @@
 
         public override string? ToString()
         {
-            return $"{_UTCPostedAt.ToString()} - {_author.GetName}: {_comment}";
+            return $"{_UTCPostedAt.ToString()} - {_author.Name}: {_comment}";
         }
     }
 }

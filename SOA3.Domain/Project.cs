@@ -7,16 +7,16 @@ namespace SOA3.Domain
 {
     public class Project
     {
-        private Guid _id;
-        private string _name;
-        private string _description;
-        private DateOnly _startDate;
-        private DateOnly _endDate;
-        private Person _productOwner;
-        private SCMConfig _scmConfiguration; // TODO: Prob remove this
-        private ISCMService _scmService = new GitSCMAdapter(); // TODO: Prob remove this
-        private Forum _forum;
-        private string _definitionOfDone;
+        public Guid Id;
+        public required string Name;
+        public required string Description;
+        public DateOnly StartDate;
+        public DateOnly EndDate;
+        public required Person ProductOwner;
+        public SCMConfig? SCMConfiguration; // Should only set this with the sprint or smth
+        public ISCMService SCMService = new GitSCMAdapter(); // TODO: Prob remove this
+        public Forum Forum = new Forum();
+        public required string DefinitionOfDone;
         private List<BacklogItem> _productBacklog = new List<BacklogItem>();
         private List<DevelopmentPipeline> _developmentPipelines = new List<DevelopmentPipeline>();
     }

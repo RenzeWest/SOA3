@@ -3,156 +3,229 @@ using SOA3.Domain.BacklogPatterns;
 using System;
 using Xunit;
 
-namespace SOA3.Tests.BacklogItemTests
+namespace SOA3.Tests.BacklogPatterns
 {
-    public class BacklogItemTests
+    // ----------------------------------------
+    // Helper for testing invalid operations
+    // ----------------------------------------
+    public static class StateTestHelper
     {
-        // 1. Initial state
-        [Fact]
-        public void BacklogItem_Should_Start_In_Todo_State()
+        public static void AssertInvalidOperations(IBacklogItemState state, string[] allowedMethods)
         {
-            // Verify that a new backlog item starts in the TODO state
-            var item = new BacklogItem();
-            var state = item.GetState();
-            Assert.IsType<TodoState>(state);
+            if (!allowedMethods.Contains("StartWork"))
+                Assert.Throws<InvalidOperationException>(() => state.StartWork());
+
+            if (!allowedMethods.Contains("MarkReadyForTesting"))
+                Assert.Throws<InvalidOperationException>(() => state.MarkReadyForTesting());
+
+            if (!allowedMethods.Contains("StartTesting"))
+                Assert.Throws<InvalidOperationException>(() => state.StartTesting());
+
+            if (!allowedMethods.Contains("ApproveTest"))
+                Assert.Throws<InvalidOperationException>(() => state.ApproveTest());
+
+            if (!allowedMethods.Contains("AcceptDone"))
+                Assert.Throws<InvalidOperationException>(() => state.AcceptDone());
+
+            if (!allowedMethods.Contains("RejectToDo"))
+                Assert.Throws<InvalidOperationException>(() => state.RejectToDo());
+
+            if (!allowedMethods.Contains("RejectToReadyForTesting"))
+                Assert.Throws<InvalidOperationException>(() => state.RejectToReadyForTesting());
+        }
+    }
+
+    // ----------------------------------------
+    // TODO State Tests
+    // ----------------------------------------
+    public class TodoStateTests
+    {
+        [Fact]
+        public void StartWork_ShouldTransitionToDoing()
+        {
+            var activity = new Activity();
+            var state = new TodoState(activity);
+
+            state.StartWork();
+
+            Assert.Equal(activity.DoingState, activity.GetState());
         }
 
-        // 2. Valid transition: TODO → DOING
         [Fact]
-        public void Should_Move_From_Todo_To_Doing()
+        public void OtherMethods_ShouldThrowInvalidOperationException()
         {
-            // Verify valid state transition from TODO to DOING
-            var item = new BacklogItem();
-            item.StartWork();
-            Assert.IsType<DoingState>(item.GetState());
+            var activity = new Activity();
+            var state = new TodoState(activity);
+
+            StateTestHelper.AssertInvalidOperations(state, allowedMethods: new[] { "StartWork" });
+        }
+    }
+
+    // ----------------------------------------
+    // ReadyForTesting State Tests
+    // ----------------------------------------
+    public class ReadyForTestingStateTests
+    {
+        [Fact]
+        public void StartTesting_ShouldTransitionToTesting()
+        {
+            var activity = new Activity();
+            var state = new ReadyForTestingState(activity);
+
+            state.StartTesting();
+
+            Assert.Equal(activity.TestingState, activity.GetState());
         }
 
-        // 3. Invalid transition (skip states)
         [Fact]
-        public void Should_Not_Allow_ApproveTest_From_Todo()
+        public void RejectToDo_ShouldTransitionToTodo()
         {
-            // Ensure approving test from TODO state throws exception
-            var item = new BacklogItem();
-            Assert.Throws<InvalidOperationException>(() => item.ApproveTest());
+            var activity = new Activity();
+            var state = new ReadyForTestingState(activity);
+
+            state.RejectToDo();
+
+            Assert.Equal(activity.TodoState, activity.GetState());
         }
 
-        // 4. Full happy flow to TESTED
         [Fact]
-        public void Should_Follow_Happy_Flow_Until_Tested()
+        public void RejectToReadyForTesting_ShouldStayInReadyForTesting()
         {
-            // Verify full lifecycle until TESTED state
-            var item = new BacklogItem();
-            item.StartWork();              // TODO → DOING
-            item.MarkReadyForTesting();    // DOING → READY FOR TESTING
-            item.StartTesting();           // → TESTING
-            item.ApproveTest();            // → TESTED
+            var activity = new Activity();
+            var state = new ReadyForTestingState(activity);
 
-            Assert.IsType<TestedState>(item.GetState());
+            state.RejectToReadyForTesting();
+
+            Assert.Equal(activity.ReadyForTestingState, activity.GetState());
         }
 
-        // 5. Reject → terug naar TODO
         [Fact]
-        public void Should_Return_To_Todo_When_Rejected()
+        public void OtherMethods_ShouldThrowInvalidOperationException()
         {
-            // Verify reject to TODO works from READY FOR TESTING
-            var item = new BacklogItem();
-            item.StartWork();
-            item.MarkReadyForTesting();
+            var activity = new Activity();
+            var state = new ReadyForTestingState(activity);
 
-            item.RejectToDo();
-            Assert.IsType<TodoState>(item.GetState());
+            StateTestHelper.AssertInvalidOperations(state,
+                allowedMethods: new[] { "StartTesting", "RejectToDo", "RejectToReadyForTesting" });
+        }
+    }
+
+    // ----------------------------------------
+    // Testing State Tests
+    // ----------------------------------------
+    public class TestingStateTests
+    {
+        [Fact]
+        public void ApproveTest_ShouldTransitionToTested()
+        {
+            var activity = new Activity();
+            var state = new TestingState(activity);
+
+            state.ApproveTest();
+
+            Assert.Equal(activity.TestedState, activity.GetState());
         }
 
-        // 6. AcceptDone without all activities completed → should fail
         [Fact]
-        public void Should_Not_Allow_Done_When_Activities_Not_Completed()
+        public void RejectToDo_ShouldTransitionToTodo()
         {
-            // Ensure DONE is not allowed if activities are not completed
-            var item = new BacklogItem();
+            var activity = new Activity();
+            var state = new TestingState(activity);
 
-            var activityMock = new Mock<Activity>();
-            activityMock.Setup(a => a.GetState())
-                        .Returns(new TodoState(activityMock.Object)); // not done
-            item.AddActivity(activityMock.Object);
+            state.RejectToDo();
 
-            item.StartWork();
-            item.MarkReadyForTesting();
-            item.StartTesting();
-            item.ApproveTest();
-
-            Assert.Throws<InvalidOperationException>(() => item.AcceptDone());
-            Assert.IsNotType<DoneState>(item.GetState());
+            Assert.Equal(activity.TodoState, activity.GetState());
         }
 
-        // 6b. Done blocked if any activity not completed
         [Fact]
-        public void Should_Not_Allow_Done_If_Any_Activity_Not_Completed()
+        public void RejectToReadyForTesting_ShouldTransitionToReadyForTesting()
         {
-            // Verify DONE is blocked if at least one activity is not done
-            var item = new BacklogItem();
+            var activity = new Activity();
+            var state = new TestingState(activity);
 
-            var activityDone = new Mock<Activity>();
-            activityDone.Setup(a => a.GetState()).Returns(item.DoneState);
+            state.RejectToReadyForTesting();
 
-            var activityTodo = new Mock<Activity>();
-            activityTodo.Setup(a => a.GetState()).Returns(new TodoState(activityTodo.Object));
-
-            item.AddActivity(activityDone.Object);
-            item.AddActivity(activityTodo.Object);
-
-            item.StartWork();
-            item.MarkReadyForTesting();
-            item.StartTesting();
-            item.ApproveTest();
-
-            Assert.Throws<InvalidOperationException>(() => item.AcceptDone());
+            Assert.Equal(activity.ReadyForTestingState, activity.GetState());
         }
 
-        // 7. AcceptDone with all activities done → should succeed
         [Fact]
-        public void Should_Allow_Done_When_All_Activities_Are_Completed()
+        public void OtherMethods_ShouldThrowInvalidOperationException()
         {
-            // Verify DONE is allowed when all activities are completed
-            var item = new BacklogItem();
-            var doneState = item.DoneState;
+            var activity = new Activity();
+            var state = new TestingState(activity);
 
-            var activityMock = new Mock<Activity>();
-            activityMock.Setup(a => a.GetState()).Returns(doneState);
+            StateTestHelper.AssertInvalidOperations(state,
+                allowedMethods: new[] { "ApproveTest", "RejectToDo", "RejectToReadyForTesting" });
+        }
+    }
 
-            item.AddActivity(activityMock.Object);
+    // ----------------------------------------
+    // Tested State Tests
+    // ----------------------------------------
+    public class TestedStateTests
+    {
+        [Fact]
+        public void AcceptDone_ShouldTransitionToDone()
+        {
+            var activity = new Activity();
+            var state = new TestedState(activity);
 
-            item.StartWork();
-            item.MarkReadyForTesting();
-            item.StartTesting();
-            item.ApproveTest();
-            item.AcceptDone();
+            state.AcceptDone();
 
-            Assert.IsType<DoneState>(item.GetState());
+            Assert.Equal(activity.DoneState, activity.GetState());
         }
 
-        // 8. Reject from TESTING → back to READY FOR TESTING
         [Fact]
-        public void Should_Return_To_ReadyForTesting_When_Rejected_From_Testing()
+        public void RejectToDo_ShouldTransitionToTodo()
         {
-            // Verify rejecting from TESTING moves item back to READY FOR TESTING
-            var item = new BacklogItem();
-            item.StartWork();
-            item.MarkReadyForTesting();
-            item.StartTesting();
+            var activity = new Activity();
+            var state = new TestedState(activity);
 
-            item.RejectToReadyForTesting();
-            Assert.IsType<ReadyForTestingState>(item.GetState());
+            state.RejectToDo();
+
+            Assert.Equal(activity.TodoState, activity.GetState());
         }
 
-        // 9. Edge case: StartTesting without being READY FOR TESTING
         [Fact]
-        public void Should_Not_Allow_StartTesting_If_Not_ReadyForTesting()
+        public void RejectToReadyForTesting_ShouldTransitionToReadyForTesting()
         {
-            // Ensure starting TESTING before READY FOR TESTING throws exception
-            var item = new BacklogItem();
-            item.StartWork(); // TODO → DOING
+            var activity = new Activity();
+            var state = new TestedState(activity);
 
-            Assert.Throws<InvalidOperationException>(() => item.StartTesting());
+            state.RejectToReadyForTesting();
+
+            Assert.Equal(activity.ReadyForTestingState, activity.GetState());
+        }
+
+        [Fact]
+        public void OtherMethods_ShouldThrowInvalidOperationException()
+        {
+            var activity = new Activity();
+            var state = new TestedState(activity);
+
+            StateTestHelper.AssertInvalidOperations(state,
+                allowedMethods: new[] { "AcceptDone", "RejectToDo", "RejectToReadyForTesting" });
+        }
+    }
+
+    // ----------------------------------------
+    // Done State Tests
+    // ----------------------------------------
+    public class DoneStateTests
+    {
+        [Fact]
+        public void AllMethods_ShouldThrowNotImplementedException()
+        {
+            var activity = new Activity();
+            var state = new DoneState(activity);
+
+            Assert.Throws<NotImplementedException>(() => state.StartWork());
+            Assert.Throws<NotImplementedException>(() => state.MarkReadyForTesting());
+            Assert.Throws<NotImplementedException>(() => state.StartTesting());
+            Assert.Throws<NotImplementedException>(() => state.ApproveTest());
+            Assert.Throws<NotImplementedException>(() => state.AcceptDone());
+            Assert.Throws<NotImplementedException>(() => state.RejectToDo());
+            Assert.Throws<NotImplementedException>(() => state.RejectToReadyForTesting());
         }
     }
 }

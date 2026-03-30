@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace SOA3.Tests.ForumTests
 {
+    [Collection("Sequential")]
     public class ForumTests
     {
         // Helper to create a Person

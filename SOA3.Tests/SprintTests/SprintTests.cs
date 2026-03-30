@@ -2,6 +2,7 @@
 using SOA3.Domain.SprintPatterns;
 using SOA3.Domain.SprintPatterns.ReportPatterns;
 using SOA3.Domain.SprintPatterns.SprintStatePattern;
+using SOA3.Tests.BacklogPatterns;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -9,6 +10,7 @@ using Xunit;
 
 namespace SOA3.Tests.SprintTests
 {
+    [Collection("Sequential")]
     public class ReviewSprintStateTests
     {
         private ISprintState GetPrivateState(Sprint sprint)
@@ -25,6 +27,7 @@ namespace SOA3.Tests.SprintTests
         [Fact]
         public void Sprint_DefaultState_ShouldBeCreatedState()
         {
+            using var console = new ConsoleRedirect();
             var sprint = new ReviewSprint();
 
             Assert.Equal(sprint.CreatedState, GetPrivateState(sprint));
@@ -36,6 +39,7 @@ namespace SOA3.Tests.SprintTests
         [Fact]
         public void CreatedState_StartSprint_ShouldTransitionToInProgress()
         {
+            using var console = new ConsoleRedirect();
             var sprint = new ReviewSprint();
 
             sprint.StartSprint();
@@ -46,6 +50,7 @@ namespace SOA3.Tests.SprintTests
         [Fact]
         public void CreatedState_FinishSprint_ShouldThrow()
         {
+            using var console = new ConsoleRedirect();
             var sprint = new ReviewSprint();
 
             Assert.Throws<InvalidOperationException>(() => sprint.FinishSprint());
@@ -57,6 +62,7 @@ namespace SOA3.Tests.SprintTests
         [Fact]
         public void InProgressState_FinishSprint_ShouldTransitionToFinished()
         {
+            using var console = new ConsoleRedirect();
             var sprint = new ReviewSprint();
             sprint.setState(sprint.InProgressState);
 
@@ -71,6 +77,7 @@ namespace SOA3.Tests.SprintTests
         [Fact]
         public void FinishedState_StartSprint_ShouldThrow()
         {
+            using var console = new ConsoleRedirect();
             var sprint = new ReviewSprint();
             sprint.setState(sprint.FinishedState);
 
@@ -83,6 +90,7 @@ namespace SOA3.Tests.SprintTests
         [Fact]
         public void ReviewingState_CannotStartSprint_ShouldThrow()
         {
+            using var console = new ConsoleRedirect();
             var sprint = new ReviewSprint();
             sprint.setState(sprint.FinalizedState);
 
@@ -92,6 +100,7 @@ namespace SOA3.Tests.SprintTests
         [Fact]
         public void ReviewingState_CannotFinishSprint_ShouldThrow()
         {
+            using var console = new ConsoleRedirect();
             var sprint = new ReviewSprint();
             sprint.setState(sprint.FinalizedState);
 
@@ -104,6 +113,7 @@ namespace SOA3.Tests.SprintTests
         [Fact]
         public void AddBacklogItem_ShouldNotAdd_WhenNotInCreatedState()
         {
+            using var console = new ConsoleRedirect();
             var sprint = new ReviewSprint();
             var item = new BacklogItem("Item1");
 
@@ -116,6 +126,7 @@ namespace SOA3.Tests.SprintTests
         [Fact]
         public void AddNullBacklogItem_ShouldThrowArgumentNullException()
         {
+            using var console = new ConsoleRedirect();
             var sprint = new ReviewSprint();
 
             Assert.Throws<ArgumentNullException>(() => sprint.AddBacklogItem(null));
@@ -127,6 +138,7 @@ namespace SOA3.Tests.SprintTests
         [Fact]
         public void UpdateDetails_InCreatedState_ShouldChangeDetails()
         {
+            using var console = new ConsoleRedirect();
             var sprint = new ReviewSprint();
             var start = DateTime.Today;
             var end = DateTime.Today.AddDays(5);
@@ -141,6 +153,7 @@ namespace SOA3.Tests.SprintTests
         [Fact]
         public void UpdateDetails_InFinishedState_ShouldNotChangeDetails()
         {
+            using var console = new ConsoleRedirect();
             var sprint = new ReviewSprint();
             sprint.setState(sprint.FinishedState);
 
@@ -155,6 +168,7 @@ namespace SOA3.Tests.SprintTests
    
     }
 
+    [Collection("Sequential")]
     public class ExportFormatTests
     {
         [Fact]
@@ -165,6 +179,7 @@ namespace SOA3.Tests.SprintTests
         }
     }
 
+    [Collection("Sequential")]
     public class DocumentTests
     {
         [Fact]
@@ -181,6 +196,7 @@ namespace SOA3.Tests.SprintTests
         }
     }
 
+    [Collection("Sequential")]
     public class ReportSettingsTests
     {
         [Fact]
@@ -198,6 +214,7 @@ namespace SOA3.Tests.SprintTests
         }
     }
 
+    [Collection("Sequential")]
     public class SprintImplementationTests
     {
         [Fact]
@@ -219,6 +236,7 @@ namespace SOA3.Tests.SprintTests
         }
     }
 
+    [Collection("Sequential")]
     public class ExportReportStrategyTests
     {
         [Fact]
@@ -240,6 +258,7 @@ namespace SOA3.Tests.SprintTests
         }
     }
 
+    [Collection("Sequential")]
     public class SprintReportTests
     {
         [Fact]

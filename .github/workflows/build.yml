@@ -37,17 +37,32 @@ jobs:
         run: |
           New-Item -Path ${{ runner.temp }}\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path ${{ runner.temp }}\scanner
-      - name: Build and analyze
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        shell: powershell
-        run: |
-          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"RenzeWest_SOA3" /o:"renzewest"/d:sonar.token="$env:SONAR_TOKEN" `            /d:sonar.host.url="https://sonarcloud.io" `
-            /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" `
-            /d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
-
-          dotnet build
-
-          dotnet test --no-build --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
-          dotnet build
-          ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="$env:SONAR_TOKEN"
+          - name: Build, Test & Analyze
+            env:
+              SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            shell: powershell
+            run: |
+              # Start Sonar analysis
+              $scanner = "${{ runner.temp }}\scanner\dotnet-sonarscanner"
+              & $scanner begin `
+                /k:"RenzeWest_SOA3" `
+                /o:"renzewest" `
+                /d:sonar.host.url="https://sonarcloud.io" `
+                /d:sonar.token="$env:SONAR_TOKEN" `
+                /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" `
+                /d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
+          
+              # Build the solution
+              dotnet build
+          
+              # Run tests with coverage
+              dotnet test SOA3.Tests/SOA3.Tests.csproj `
+                --no-build `
+                --logger "trx;LogFileName=TestResults.trx" `
+                /p:CollectCoverage=true `
+                /p:CoverletOutputFormat=opencover `
+                /p:CoverletOutput=./TestResults/coverage.opencover.xml
+          
+              # End Sonar analysis
+              & $scanner end /d:sonar.token="$env:SONAR_TOKEN"
+                & $scanner end /d:sonar.token="$env:SONAR_TOKEN"

@@ -19,12 +19,13 @@
         public void RejectToDo()
         {
             Console.WriteLine($"{_backlogItem.Title} has been rejected and moved back to TODO");
-            _backlogItem.SetState(_backlogItem.DoneState);
+            _backlogItem.SetState(_backlogItem.TodoState);
         }
+
         public void RejectToReadyForTesting()
         {
-            Console.WriteLine($"{_backlogItem.Title} has been rejected and moved back to ready for testing");
-            _backlogItem.SetState(_backlogItem.DoneState);
+            Console.WriteLine($"{_backlogItem.Title} has been rejected and moved back to ReadyForTesting");
+            _backlogItem.SetState(_backlogItem.ReadyForTestingState);
         }
     }
 }

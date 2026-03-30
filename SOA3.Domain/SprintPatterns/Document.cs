@@ -2,7 +2,7 @@
 {
     public class Document
     {
-        private Guid _id = new Guid();
+        private Guid _id = Guid.NewGuid();
         private string _fileName;
         private string _fileType;
         private string _content;

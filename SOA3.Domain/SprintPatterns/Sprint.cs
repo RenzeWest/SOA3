@@ -62,8 +62,13 @@ namespace SOA3.Domain.SprintPatterns
         }
         public void AddBacklogItem(BacklogItem backlogItem)
         {
-            if (_state == CreatedState) this._sprintBacklog.Add(backlogItem);
-            else Console.WriteLine("Not allowed to add an item to the backlog");
+            if (backlogItem == null)
+                throw new ArgumentNullException(nameof(backlogItem), "Backlog item cannot be null");
+
+            if (_state == CreatedState)
+                _sprintBacklog.Add(backlogItem);
+            else
+                Console.WriteLine("Not allowed to add an item to the backlog");
         }
     }
 }

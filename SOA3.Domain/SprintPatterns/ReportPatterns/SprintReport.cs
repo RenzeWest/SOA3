@@ -14,5 +14,10 @@
         }
 
         public Document ExportReport(ReportSettings settings) => exportReport.ExportReport(settings);
+
+        public void SetExportStrategy(IExportReport strategy)
+        {
+            exportReport = strategy ?? throw new ArgumentNullException(nameof(strategy));
+        }
     }
 }

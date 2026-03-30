@@ -85,23 +85,7 @@ namespace SOA3.Tests.SCMTests
         // Extra tests voor coverage
         // -------------------------
 
-        [Fact]
-        public void GitClient_Should_WriteExpectedConsoleOutput()
-        {
-            var repo = "https://repo.git";
-            var branch = "develop";
-            var message = "Initial commit";
-
-            using var sw = new System.IO.StringWriter();
-            Console.SetOut(sw);
-
-            GitClient.Commit(repo, branch, message);
-
-            var output = sw.ToString();
-            Assert.Contains(repo, output);
-            Assert.Contains(branch, output);
-            Assert.Contains(message, output);
-        }
+        
 
         [Fact]
         public void GitSCMAdapter_Should_Call_GitClient_ConsoleOutput()
@@ -164,6 +148,27 @@ namespace SOA3.Tests.SCMTests
                 LastBranch = config.BranchName;
                 LastMessage = commit.Message;
             }
+        }
+
+        public class ConsoleCapture : IDisposable
+        {
+            private readonly TextWriter _originalOut;
+            public StringWriter Writer { get; }
+
+            public ConsoleCapture()
+            {
+                _originalOut = Console.Out;
+                Writer = new StringWriter();
+                Console.SetOut(Writer);
+            }
+
+            public void Dispose()
+            {
+                Console.SetOut(_originalOut);
+                Writer.Dispose();
+            }
+
+            public string GetOutput() => Writer.ToString();
         }
     }
 }

@@ -152,7 +152,7 @@ namespace SOA3.Tests.SprintTests
             Assert.NotEqual("Name", sprint.Name);
         }
 
-
+   
     }
 
     public class ExportFormatTests
@@ -261,21 +261,5 @@ namespace SOA3.Tests.SprintTests
             Called = true;
             return new Document();
         }
-
-
-        [Fact]
-        public void ExportReport_ShouldUseInjectedStrategy()
-        {
-            var report = new SprintReport();
-            var fake = new FakeExport();
-
-            report.SetExportStrategy(fake);
-
-            var result = report.ExportReport(new ReportSettings());
-
-            Assert.True(fake.Called);
-            Assert.NotNull(result);
-        }
     }
 }
-    

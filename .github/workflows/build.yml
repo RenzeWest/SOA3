@@ -1,4 +1,4 @@
-name: SonarQube
+name: SonarQube Analysis
 
 on:
   push:
@@ -9,29 +9,33 @@ on:
 
 jobs:
   build:
-    name: Build and analyze
+    name: Build, Test & Analyze
     runs-on: windows-latest
 
     steps:
+      # Set up JDK (SonarCloud requirement)
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: 'zulu'
 
+      # Checkout code
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Cache SonarQube Cloud packages
+      # Cache SonarCloud packages
+      - name: Cache SonarCloud packages
         uses: actions/cache@v4
         with:
           path: ~\sonar\cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      - name: Cache SonarQube scanner
+      # Cache dotnet-sonarscanner tool
+      - name: Cache SonarScanner tool
         id: cache-sonar-scanner
         uses: actions/cache@v4
         with:
@@ -39,37 +43,45 @@ jobs:
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
 
-      - name: Install SonarQube scanner
+      # Install dotnet-sonarscanner if not cached
+      - name: Install SonarScanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         shell: powershell
         run: |
           New-Item -Path ${{ runner.temp }}\scanner -ItemType Directory
-          dotnet tool update dotnet-sonarscanner --tool-path ${{ runner.temp }}\scanner
+          dotnet tool install dotnet-sonarscanner --tool-path ${{ runner.temp }}\scanner
 
-      - name: Build, test and analyze
+      # Build, test and analyze
+      - name: Build, Test and Analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          # Start Sonar analysis
-            ${{ runner.temp }}\scanner\dotnet-sonarscanner begin `
-              /k:"RenzeWest_SOA3" `
-              /o:"renzewest" `
-              /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
-              /d:sonar.cs.opencover.reportsPaths="**/TestResults/coverage.opencover.xml" `
-              /d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
+          # Create TestResults folder
+          New-Item -ItemType Directory -Force -Path "./TestResults"
 
-          # Build project
+          # --- Begin Sonar analysis ---
+          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin `
+            /k:"RenzeWest_SOA3" `
+            /o:"renzewest" `
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
+            /d:sonar.cs.opencover.reportsPaths="./TestResults/coverage.opencover.xml" `
+            /d:sonar.cs.vstest.reportsPaths="./TestResults/TestResults.trx"
+
+          # --- Build project ---
           dotnet build --no-incremental
 
-          # Run tests WITH coverage
-          dotnet test --no-build `
+          # --- Run tests WITH coverage and TRX output ---
+          dotnet test SOA3.Tests/SOA3.Tests.csproj `
+            --no-build `
+            --logger "trx;LogFileName=TestResults.trx" `
             /p:CollectCoverage=true `
-            /p:CoverletOutputFormat=opencover
+            /p:CoverletOutputFormat=opencover `
+            /p:CoverletOutput=./TestResults/coverage.opencover.xml
 
-          # Debug: check of coverage file bestaat
+          # --- Debug: check if files exist ---
+          Get-ChildItem -Recurse -Filter "*.trx"
           Get-ChildItem -Recurse -Filter "coverage.opencover.xml"
 
-          # End Sonar analysis
-          ${{ runner.temp }}\scanner\dotnet-sonarscanner end `
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          # --- End Sonar analysis ---
+          ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"

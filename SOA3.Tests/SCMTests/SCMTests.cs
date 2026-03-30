@@ -3,16 +3,13 @@ using SOA3.Domain;
 using SOA3.Domain.BacklogPatterns;
 using SOA3.Domain.SCMConfigPatterns;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Xunit;
 
 namespace SOA3.Tests.SCMTests
 {
     public class SCMTests
     {
-        // Helper: maak een mock backlog item met assigned developer
+        // Helper
         private IBacklogItem CreateMockBacklogItem(out Person developer)
         {
             developer = new Person("Alice", "alice@example.com");
@@ -24,31 +21,25 @@ namespace SOA3.Tests.SCMTests
         [Fact]
         public void Commit_Should_SetPropertiesCorrectly()
         {
-            // Arrange
             var backlogItem = CreateMockBacklogItem(out var developer);
             var message = "Fix bug in feature X";
 
-            // Act
             var commit = new Commit(backlogItem, message);
 
-            // Assert
             Assert.Equal(message, commit.Message);
             Assert.Equal(backlogItem, commit.BacklogItem);
             Assert.Equal(developer, commit.Author);
-            Assert.True(commit.DateTime <= DateTime.UtcNow); // Timestamp correct
+            Assert.True(commit.DateTime <= DateTime.UtcNow);
         }
 
         [Fact]
         public void SCMConfig_Should_SetPropertiesCorrectly()
         {
-            // Arrange
             var repo = "https://github.com/test/repo.git";
             var branch = "main";
 
-            // Act
             var config = new SCMConfig(repo, branch);
 
-            // Assert
             Assert.Equal(repo, config.RepositoryURL);
             Assert.Equal(branch, config.BranchName);
         }
@@ -56,7 +47,6 @@ namespace SOA3.Tests.SCMTests
         [Fact]
         public void GitSCMAdapter_Should_Call_GitClient_WithCorrectParams()
         {
-            // Arrange
             var repo = "link";
             var branch = "main";
             var config = new SCMConfig(repo, branch);
@@ -64,13 +54,10 @@ namespace SOA3.Tests.SCMTests
             var backlogItem = CreateMockBacklogItem(out var developer);
             var commit = new Commit(backlogItem, "Test commit");
 
-            // Mock GitClient door overerving
             var testClient = new TestGitClientAdapter();
 
-            // Act
             testClient.Commit(config, commit);
 
-            // Assert
             Assert.Equal(repo, TestGitClientAdapter.LastRepo);
             Assert.Equal(branch, TestGitClientAdapter.LastBranch);
             Assert.Equal("Test commit", TestGitClientAdapter.LastMessage);
@@ -79,23 +66,87 @@ namespace SOA3.Tests.SCMTests
         [Fact]
         public void Commit_Should_Use_ISCMService_WhenSet()
         {
-            // Arrange
             var backlogItem = CreateMockBacklogItem(out var developer);
             var commit = new Commit(backlogItem, "Commit message");
 
             var scmServiceMock = new Mock<ISCMService>();
-            // Vervang private service met mock via reflection
             typeof(Commit)
                 .GetField("sCMService", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
                 .SetValue(commit, scmServiceMock.Object);
 
             var config = new SCMConfig("repo", "main");
 
-            // Act
             scmServiceMock.Object.Commit(config, commit);
 
-            // Assert
             scmServiceMock.Verify(s => s.Commit(config, commit), Times.Once);
+        }
+
+        // -------------------------
+        // Extra tests voor coverage
+        // -------------------------
+
+        [Fact]
+        public void GitClient_Should_WriteExpectedConsoleOutput()
+        {
+            var repo = "https://repo.git";
+            var branch = "develop";
+            var message = "Initial commit";
+
+            using var sw = new System.IO.StringWriter();
+            Console.SetOut(sw);
+
+            GitClient.Commit(repo, branch, message);
+
+            var output = sw.ToString();
+            Assert.Contains(repo, output);
+            Assert.Contains(branch, output);
+            Assert.Contains(message, output);
+        }
+
+        [Fact]
+        public void GitSCMAdapter_Should_Call_GitClient_ConsoleOutput()
+        {
+            var config = new SCMConfig("repo", "feature");
+            var backlogItem = CreateMockBacklogItem(out var dev);
+            var commit = new Commit(backlogItem, "Message");
+
+            using var sw = new System.IO.StringWriter();
+            Console.SetOut(sw);
+
+            var adapter = new GitSCMAdapter();
+            adapter.Commit(config, commit);
+
+            var output = sw.ToString();
+            Assert.Contains("repo", output);
+            Assert.Contains("feature", output);
+            Assert.Contains("Message", output);
+        }
+
+        [Fact]
+        public void SCMConfig_Should_HandleEmptyStrings()
+        {
+            var config = new SCMConfig("", "");
+            Assert.Equal("", config.RepositoryURL);
+            Assert.Equal("", config.BranchName);
+        }
+
+        [Fact]
+        public void SCMConfig_Should_HandleNullStrings()
+        {
+            var config = new SCMConfig(null, null);
+            Assert.Null(config.RepositoryURL);
+            Assert.Null(config.BranchName);
+        }
+
+        [Fact]
+        public void Commit_DefaultService_Should_SetProperties()
+        {
+            var backlogItem = CreateMockBacklogItem(out var dev);
+            var commit = new Commit(backlogItem, "Some commit");
+
+            Assert.Equal("Some commit", commit.Message);
+            Assert.Equal(backlogItem, commit.BacklogItem);
+            Assert.Equal(dev, commit.Author);
         }
 
         // -------------------------
@@ -109,7 +160,6 @@ namespace SOA3.Tests.SCMTests
 
             public new void Commit(SCMConfig config, Commit commit)
             {
-                // Simuleer GitClient commit
                 LastRepo = config.RepositoryURL;
                 LastBranch = config.BranchName;
                 LastMessage = commit.Message;

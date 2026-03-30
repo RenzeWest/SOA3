@@ -52,12 +52,12 @@ jobs:
         shell: powershell
         run: |
           # Start Sonar analysis
-          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin `
-            /k:"RenzeWest_SOA3" `
-            /o:"renzewest" `
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
-            /d:sonar.cs.opencover.reportsPaths="**/TestResults/coverage.opencover.xml"
-            /d:sonar.cs.vstest.reportsPaths="**/*.trx"
+            ${{ runner.temp }}\scanner\dotnet-sonarscanner begin `
+              /k:"RenzeWest_SOA3" `
+              /o:"renzewest" `
+              /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
+              /d:sonar.cs.opencover.reportsPaths="**/TestResults/coverage.opencover.xml" `
+              /d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
 
           # Build project
           dotnet build --no-incremental

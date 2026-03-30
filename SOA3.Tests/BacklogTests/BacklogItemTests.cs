@@ -334,5 +334,47 @@ namespace SOA3.Tests.BacklogPatterns
 
               Assert.Equal(item.ReadyForTestingState, item.GetState());
         }
+
+        [Fact]
+        public void AcceptDone_ShouldThrow_WhenSomeActivitiesNotDone()
+        {
+            var item = new BacklogItem();
+
+            var doneActivity = new Activity();
+            doneActivity.SetState(doneActivity.DoneState);
+
+            var todoActivity = new Activity();
+            todoActivity.SetState(todoActivity.TodoState);
+
+            item.AddActivity(doneActivity);
+            item.AddActivity(todoActivity);
+
+            item.StartWork();
+            item.MarkReadyForTesting();
+            item.StartTesting();
+            item.ApproveTest();
+
+            var ex = Assert.Throws<InvalidOperationException>(() => item.AcceptDone());
+            Assert.Contains("one or more activities are not completed", ex.Message);
+        }
+
+
+
+        // ----------------------------------------
+        // Doing State Tests
+        // ----------------------------------------
+        [Fact]
+        public void DoingState_MarkReadyForTesting_ShouldTransitionToReadyForTesting()
+        {
+            // Arrange
+            var activity = new Activity();
+            var state = new DoingState(activity);
+
+            // Act
+            state.MarkReadyForTesting();
+
+            // Assert
+            Assert.Equal(activity.ReadyForTestingState, activity.GetState());
+        }
     }
 }

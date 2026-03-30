@@ -51,36 +51,34 @@ jobs:
           New-Item -Path ${{ runner.temp }}\scanner -ItemType Directory
           dotnet tool install dotnet-sonarscanner --tool-path ${{ runner.temp }}\scanner
 
-      # Build, test and analyze
+     # Build, test and analyze
       - name: Build, Test and Analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          # Create TestResults folder
-          New-Item -ItemType Directory -Force -Path "./TestResults"
-
-          # --- Begin Sonar analysis ---
-          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin `
+          # 6a️⃣ Start SonarScanner analysis
+          $scanner = "${{ runner.temp }}\scanner\dotnet-sonarscanner"
+          $scanner begin `
             /k:"RenzeWest_SOA3" `
             /o:"renzewest" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
-            /d:sonar.cs.opencover.reportsPaths="./TestResults/coverage.opencover.xml" `
-            /d:sonar.cs.vstest.reportsPaths="./TestResults/TestResults.trx"
+            /d:sonar.cs.opencover.reportsPaths="$(pwd)\SOA3.Tests\TestResults\coverage.opencover.xml" `
+            /d:sonar.cs.vstest.reportsPaths="$(pwd)\SOA3.Tests\TestResults\TestResults.trx"
 
-          # --- Build project ---
+          # 6b️⃣ Build solution
           dotnet build --no-incremental
 
-          # --- Run tests WITH coverage and TRX output ---
-          dotnet test SOA3.Tests/SOA3.Tests.csproj `
+          # 6c️⃣ Run tests with coverage
+          dotnet test --no-build `
             --logger "trx;LogFileName=TestResults.trx" `
             /p:CollectCoverage=true `
-            /p:CoverletOutputFormat=opencover `
-            /p:CoverletOutput=./TestResults/coverage.opencover.xml
+            /p:CoverletOutput="$(pwd)\SOA3.Tests\TestResults\coverage.opencover.xml" `
+            /p:CoverletOutputFormat=opencover
 
-          # --- Debug: check if files exist ---
-          Get-ChildItem -Recurse -Filter "*.trx"
-          Get-ChildItem -Recurse -Filter "coverage.opencover.xml"
+          # 6d️⃣ Debug: check that coverage file exists
+          Write-Host "Files in TestResults folder:"
+          Get-ChildItem "$(pwd)\SOA3.Tests\TestResults"
 
-          # --- End Sonar analysis ---
-          ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          # 6e️⃣ End SonarScanner analysis
+          $scanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"

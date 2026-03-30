@@ -19,6 +19,9 @@
             Console.WriteLine($"{_backlogItem.Title} Was rejected for testing and has been moved back to todo");
             _backlogItem.SetState(_backlogItem.TodoState);
         }
-        public void RejectToReadyForTesting() => throw new InvalidOperationException();
+        public void RejectToReadyForTesting()
+        {
+            _backlogItem.SetState(_backlogItem.ReadyForTestingState);
+        }
     }
 }

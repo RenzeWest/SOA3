@@ -2,6 +2,6 @@
 {
     public interface INotificationSubscriber
     {
-        void Update(Notification notification);
+        void Update(Notification notification, List<Person> recipients);
     }
 }

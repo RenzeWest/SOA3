@@ -2,11 +2,14 @@
 {
     public class SlackAdapter : ISlackNotifier
     {
-        public bool ShouldSendMessage(Person person) => false; // person.GetNotificationChannels().Contains(Slack);
+        public bool ShouldSendMessage(Person person) => person.NotificationPreferences.Contains(NotificationChannel.Slack); 
 
-        public void Update(Notification notification)
+        public void Update(Notification notification, List<Person> recipients)
         {
-            SlackClient.SendSlackMessage();
+            foreach (var person in recipients)
+            {
+                if (ShouldSendMessage(person)) SlackClient.SendSlackMessage(person.GetName(), notification.DateTime, notification.GetMessage());
+            }
         }
     }
 }

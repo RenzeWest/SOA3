@@ -2,9 +2,6 @@
 {
     public class EmailClient
     {
-        public static void SendEmail()
-        {
-            throw new NotImplementedException(); // TODO: Implement
-        }
+        public static void SendEmail(string emailAddress, DateTime notifiedAtDateTime, string message) => Console.WriteLine($"[Send Email Notification to {emailAddress}] notified at {DateTime.UtcNow} (UTC): {message}");
     }
 }

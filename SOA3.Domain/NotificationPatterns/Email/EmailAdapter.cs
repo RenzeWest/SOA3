@@ -2,10 +2,13 @@
 {
     public class EmailAdapter : IEmailNotifier
     {
-        public bool ShouldSendEmail(Person person) => false; //person.GetNotificationChannels().Contains(Email);
-        public void Update(Notification notification)
+        public bool ShouldSendEmail(Person person) => person.NotificationPreferences.Contains(NotificationChannel.Email);
+        public void Update(Notification notification, List<Person> recipients)
         {
-            EmailClient.SendEmail();
-        }
+            foreach (var person in recipients)
+            {
+                if (ShouldSendEmail(person)) EmailClient.SendEmail(person.Email, notification.DateTime, notification.GetMessage());
+            }
+        } 
     }
 }

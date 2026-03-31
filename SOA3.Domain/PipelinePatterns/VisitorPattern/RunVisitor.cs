@@ -1,10 +1,18 @@
-﻿using SOA3.Domain.PipelinePatterns.CompositePattern.Leafs;
+﻿using SOA3.Domain.NotificationPatterns;
+using SOA3.Domain.PipelinePatterns.CompositePattern.Leafs;
 
 namespace SOA3.Domain.PipelinePatterns.VisitorPattern
 {
     public class RunVisitor : IPipelineVisitor
     {
-        public void PipelineFailed(Exception exception) => Console.WriteLine($"[Run] Failed with message:{exception.Message}"); // TODO: Should fail the sprint Ig
+        private NotificationPublisher _publisher = new NotificationPublisher();
+
+        public void PipelineFailed(Exception exception)
+        {
+            var message = $"[Run] Failed with message:{exception.Message}";
+            Console.WriteLine(message);
+            _publisher.NotifySubscribers(new Notification(DateTime.UtcNow, message));
+        }
 
         public void VisitAnalysePipelineAction(AnalysePipelineAction action) => Console.WriteLine($"[Run] Analyse action called: {action.Name}");
 

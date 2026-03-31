@@ -1,8 +1,11 @@
-﻿namespace SOA3.Domain.BacklogPatterns
+﻿using SOA3.Domain.NotificationPatterns;
+
+namespace SOA3.Domain.BacklogPatterns
 {
     public class ReadyForTestingState : IBacklogItemState
     {
         private IBacklogItem _backlogItem;
+        private NotificationPublisher _publisher = new NotificationPublisher();
 
         public ReadyForTestingState(IBacklogItem backlogItem) => _backlogItem = backlogItem;
         public void StartWork() => throw new InvalidOperationException();
@@ -16,7 +19,10 @@
         public void AcceptDone() => throw new InvalidOperationException();
         public void RejectToDo() 
         {
-            Console.WriteLine($"{_backlogItem.Title} Was rejected for testing and has been moved back to todo");
+            var message = $"{_backlogItem.Title} Was rejected for testing and has been moved back to todo";
+            Console.WriteLine(message);
+            _publisher.NotifySubscribers(new Notification(DateTime.UtcNow, message));
+
             _backlogItem.SetState(_backlogItem.TodoState);
         }
         public void RejectToReadyForTesting()

@@ -67,7 +67,6 @@ namespace SOA3.Tests.ForumTests
             forum.AddDiscussionThread(thread1);
             forum.AddDiscussionThread(thread2);
 
-            // No public getter in Forum? Let's expose for test
             var threadsField = typeof(Forum)
                 .GetField("_discussionThreads", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
                 .GetValue(forum) as System.Collections.Generic.List<DiscussionThread>;
@@ -87,7 +86,7 @@ namespace SOA3.Tests.ForumTests
             var reply2 = new Comment("Reply 2", CreatePerson("Charlie"));
 
             comment.AddComment(reply1);
-            reply1.AddComment(reply2); // Nested reply
+            reply1.AddComment(reply2); 
 
             var firstLevelReplies = comment.GetComments();
             Assert.Single(firstLevelReplies);

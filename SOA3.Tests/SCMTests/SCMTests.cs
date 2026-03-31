@@ -82,9 +82,6 @@ namespace SOA3.Tests.SCMTests
             scmServiceMock.Verify(s => s.Commit(config, commit), Times.Once);
         }
 
-        // -------------------------
-        // Extra tests voor coverage
-        // -------------------------
 
         
 
@@ -134,9 +131,7 @@ namespace SOA3.Tests.SCMTests
             Assert.Equal(dev, commit.Author);
         }
 
-        // -------------------------
-        // Helper class om GitClient te testen
-        // -------------------------
+
         private class TestGitClientAdapter : GitSCMAdapter
         {
             public static string LastRepo;
